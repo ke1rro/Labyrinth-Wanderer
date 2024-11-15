@@ -19,6 +19,17 @@
 
 ---
 
+## Requirements
+
+```txt
+numpy==2.1.3
+pygame==2.6.1
+```
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Useful links
 
 - https://en.wikipedia.org/wiki/Maze-solving_algorithm
