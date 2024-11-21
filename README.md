@@ -7,7 +7,6 @@
 - Dead-end filling
 - Recursive algorithm
 - Maze-routing algorithm
-- Shortest path algorithm
 - Multi-agent maze-solving
 - Dijkstra’s Algorithm
 - Wall Follower (or Left/Right-Hand Rule)
