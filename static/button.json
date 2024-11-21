@@ -42,12 +42,12 @@
             "shape_corner_radius": "10, 10, 10, 10"
         }
     },
-    
+
     "#file_dialog":
     {
         "colours":
         {
-            "dark_bg": "#ffffff",
+            "dark_bg": "#4848434",
             "normal_border": "#999999"
         }
     }
