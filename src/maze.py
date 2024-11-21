@@ -228,14 +228,14 @@ def draw_grid(window: pygame.Surface, rows: int, width: int) -> None:
             )
 
 
-# def draw(window: pygame.Surface, grid: list[GridCell], rows: int, width: int) -> None:
-#     """Draws the cells with thier colors on the grid"""
-#     for row in grid:
-#         for spot in row:
-#             spot.draw_cell(window)
+def draw(window: pygame.Surface, grid: list[GridCell], rows: int, width: int) -> None:
+    """Draws the cells with thier colors on the grid"""
+    for row in grid:
+        for spot in row:
+            spot.draw_cell(window)
 
-#     draw_grid(window, rows, width)
-#     pygame.display.update()
+    draw_grid(window, rows, width)
+    pygame.display.update()
 
 
 def get_mouse_click_pos_on_grid(pos: int, rows: int, width: int) -> tuple[int]:

@@ -99,7 +99,7 @@ class MazeApp:
         self.width, self.height = width, height
         self.running = True
 
-        theme_path = "/Users/nikitalenyk/Desktop/maze_solver/static/button.json"
+        theme_path = "static/button.json"
         self.manager = pygame_gui.UIManager((width, height), theme_path=theme_path)
 
         self.upload_button = pygame_gui.elements.UIButton(
