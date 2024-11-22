@@ -1,28 +1,55 @@
 '''dijkstra algorithm'''
 maze_matrix = [
-    [2, 1, 1, 1, 1, 1, 1],
-    [0, 0, 0, 1, 1, 1, 1],
-    [1, 1, 0, 0, 1, 1, 1],
-    [1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 0, 3],
-    [1, 1, 1, 1, 1, 1, 1]
+    [2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+    [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 3],
+    [1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
+    [1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0],
+    [1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1],
+    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
+    [0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
+    [0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1],
+    [1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
+    [0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
+    [1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1],
+    [1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0],
+    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1]
 ]
 
-maze_dict = {
-    (0, 0): {(1, 0)},
-    (1, 0): {(0, 0), (1, 1)},
-    (1, 1): {(1, 0), (1, 2)},
-    (1, 2): {(1, 1), (2, 2)},
-    (2, 2): {(1, 2), (2, 3)},
-    (2, 3): {(2, 2), (3, 3)},
-    (3, 3): {(2, 3), (4, 3)},
-    (4, 3): {(3, 3), (4, 4)},
-    (4, 4): {(4, 3), (4, 5)},
-    (4, 5): {(4, 4), (5, 5)},
-    (5, 5): {(4, 5), (5, 6)},
-    (5, 6): {(5, 5)}
-}
+
+def matrix_to_adj_dict(maze: list[list[int]]):
+    n = len(maze)
+    adjacent_dict = {}
+    start = None
+    end = None
+    for row in range(n):
+        for col in range(n):
+            if maze[row][col] == 1:
+                continue
+            if maze[row][col] == 2:
+                start = (row, col)
+            elif maze[row][col] == 3:
+                end = (row, col)
+            adjacent_dict[(row, col)] = set()
+            if row != 0:
+                if maze[row-1][col] != 1:
+                    adjacent_dict[(row, col)].add((row-1, col))
+            if row != n-1:
+                if maze[row+1][col] != 1:
+                    adjacent_dict[(row, col)].add((row+1, col))
+            if col != 0:
+                if maze[row][col-1] != 1:
+                    adjacent_dict[(row, col)].add((row, col-1))
+            if col != n-1:
+                if maze[row][col+1] != 1:
+                    adjacent_dict[(row, col)].add((row, col+1))
+    return adjacent_dict, start, end
 
 
 def compare_dist(point: tuple[tuple, int], graph: dict) -> bool:
@@ -37,12 +64,11 @@ def dijkstra(maze: dict[tuple: tuple], start: tuple, end: tuple) -> dict:
     graph = {node: [float('inf'), False, None] for node in maze}
     graph[start] = [0, True, start]
     queue = [(start, 0)]
-    prev_node = start
     while True:
         cur_node = get_min_dist_node(graph, queue)
         if cur_node[0] == end:
             return graph
-        graph[cur_node[0]][2] = prev_node[0]
+        graph[cur_node[0]][1] = True
         queue.remove(cur_node)
         for node in maze[cur_node[0]]:
             if graph[node][1]:
@@ -51,7 +77,6 @@ def dijkstra(maze: dict[tuple: tuple], start: tuple, end: tuple) -> dict:
                 graph[node][0] = cur_node[1] + 1
                 graph[node][2] = cur_node[0]
                 queue.append((node, graph[node][0]))
-        prev_node = cur_node
         if not queue:
             return -1
     return -1
@@ -68,11 +93,12 @@ def reconstruct_path(graph: dict, start: tuple, end: tuple) -> list[tuple]:
     return list(reversed(path))
 
 
-def find_shortest_path(maze: dict, start: tuple, end: tuple) -> list[tuple] | int:
-    graph = dijkstra(maze, start, end)
+def find_shortest_path(maze_matr: list[list[int]]) -> list[tuple] | int:
+    maze_dict, start, end = matrix_to_adj_dict(maze_matr)
+    graph = dijkstra(maze_dict, start, end)
     if graph != -1:
         return reconstruct_path(graph, start, end)
     return -1
 
 
-# print(find_shortest_path(maze_dict, (0, 0), (5, 6)))
+# print(find_shortest_path(maze_matrix))
