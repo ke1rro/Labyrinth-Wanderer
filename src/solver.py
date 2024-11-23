@@ -38,7 +38,7 @@ def find_start(coord_matrix: np.array) -> GridCell:
         return GraphException(GraphErrorType.MULTIPLE_STARTS)
     return start_els[0]
 
-def backtrace(relations: dict,end_node: GridCell):
+def backtrace(draw: callable, relations: dict,end_node: GridCell):
     '''
     Highlights the correct path after the search algorithm is done.
     '''
@@ -64,7 +64,7 @@ def bfs_algorithm(draw: callable, coord_matrix: np.array):
                 pygame.quit()
         curr_node = queue.popleft()
         if curr_node.is_end():
-            backtrace(relations,curr_node)
+            backtrace(draw, relations,curr_node)
             return True
         if not curr_node.is_start():
             curr_node.make_closed()
