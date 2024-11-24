@@ -1,15 +1,19 @@
 """GUI for maze solving app"""
 
 import csv
+import random
+import threading
 
 import numpy as np
 import pygame
+import pygame.examples
 import pygame_gui
 import pygame_gui.windows.ui_file_dialog
 from pygame_gui.core import ObjectID
 
 import colors
-from maze import GridCell, algorithm
+from maze import GridCell
+from solver import algorithm
 
 
 class MazeWindow:
@@ -70,7 +74,7 @@ class MazeWindow:
                     (j * rows_gap, self.width),
                 )
 
-    def draw(self, grid):
+    def draw(self, grid: np.array) -> None:
         """Draws the colors of the each cell and whole grid"""
         self.surface.fill(colors.BLACK)
         for row in grid:
@@ -103,36 +107,59 @@ class MazeApp:
         self.manager = pygame_gui.UIManager((width, height), theme_path=theme_path)
 
         self.upload_button = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(25, self.height // 2 - 75, 150, 50),
+            relative_rect=pygame.Rect(25, self.height // 2 - 125, 150, 50),
             text="Upload Maze",
             manager=self.manager,
             object_id=ObjectID(class_id="@menu"),
         )
 
         self.generate_button = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(25, self.height // 2 - 25, 150, 50),
+            relative_rect=pygame.Rect(25, self.height // 2 - 75, 150, 50),
             text="Generate Maze",
             manager=self.manager,
             object_id=ObjectID(class_id="@menu"),
         )
 
         self.save_button = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(25, self.height // 2 + 25, 150, 50),
+            relative_rect=pygame.Rect(25, self.height // 2 - 25, 150, 50),
             text="Save Solution",
             manager=self.manager,
             object_id=ObjectID(class_id="@menu"),
         )
 
         self.close = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(25, self.height // 2 + 75, 150, 50),
+            relative_rect=pygame.Rect(25, self.height // 2 + 25, 150, 50),
             text="Close Maze Window",
             manager=self.manager,
             object_id=ObjectID(class_id="@menu"),
         )
 
         self.solve = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(25, self.height // 2 + 125, 150, 50),
+            relative_rect=pygame.Rect(25, self.height // 2 + 75, 150, 50),
             text="Solve the maze",
+            manager=self.manager,
+            object_id=ObjectID(class_id="@menu"),
+        )
+
+        self.drop_menu_alg = pygame_gui.elements.UIDropDownMenu(
+            options_list=["BFS", "DFS", "A*", "Dijkstra's"],
+            starting_option="BFS",
+            relative_rect=pygame.Rect(25, self.height // 2 - 300, 150, 50),
+            manager=self.manager,
+            object_id=ObjectID(class_id="@drop"),
+        )
+
+        self.drop_menu_size = pygame_gui.elements.UIDropDownMenu(
+            options_list=["10x10", "20x20", "25x25", "50x50", "100x100"],
+            starting_option="50x50",
+            relative_rect=pygame.Rect(1350, self.height // 2 - 300, 150, 50),
+            manager=self.manager,
+            object_id=ObjectID(class_id="@drop"),
+        )
+
+        self.random_generate = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect(25, self.height // 2 + 150, 150, 50),
+            text="Random generation",
             manager=self.manager,
             object_id=ObjectID(class_id="@menu"),
         )
@@ -142,7 +169,7 @@ class MazeApp:
         self.file_dialog_window = None
         self.maze_window = None
 
-    def file_dialog(self):
+    def file_dialog(self) -> pygame_gui.windows.UIFileDialog:
         """Creates and returns a centered file dialog."""
         dialog_width = 500
         dialog_height = 600
@@ -193,7 +220,66 @@ class MazeApp:
                     maze.append([0 if char == "." else 1 for char in line])
         return np.array(maze)
 
-    def handle_resize(self, new_width, new_height):
+    def handle_solve_button(self) -> None:
+        """Starts solving algothimn on the separete thread"""
+        if (
+            self.maze_window is not None
+            and self.maze_window.start is not None
+            and self.maze_window.end is not None
+        ):
+            for row in self.maze_window.grid:
+                for cell in row:
+                    cell.update_neighbors(grid=self.maze_window.grid)
+
+            grid = self.maze_window.grid
+            start = self.maze_window.start
+            end = self.maze_window.end
+
+            # Start the algorithm in a separate thread
+            solve_thread = threading.Thread(
+                target=algorithm,
+                args=(lambda: self.maze_window.draw(grid), grid, start, end),
+            )
+            solve_thread.start()
+
+    def generate_maze_array(self, width: int, height: int) -> np.ndarray:
+        """
+        Generates a maze using recursive DFS algorithm.
+
+        Args:
+            width (int): Width of the maze (number of columns).
+            height (int): Height of the maze (number of rows).
+
+        Returns:
+            np.ndarray: A 2D numpy array representing the maze.
+                        0 = path, 1 = wall.
+        """
+        maze = np.ones((height, width), dtype=int)
+
+        def carve_maze(x, y):
+            """Recursive function to carve the maze using DFS."""
+            directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+            random.shuffle(directions)  # Randomize directions for natural-looking mazes
+
+            for dx, dy in directions:
+                nx, ny = x + dx * 2, y + dy * 2  # Move two steps in the chosen direction
+                if 1 <= nx < width - 1 and 1 <= ny < height - 1 and maze[ny][nx] == 1:
+                    # Carve the path
+                    maze[y + dy][x + dx] = 0  # Open the intermediate cell
+                    maze[ny][nx] = 0          # Open the target cell
+                    carve_maze(nx, ny)        # Recurse
+
+        # Start carving from the top-left corner
+        maze[1][1] = 0
+        carve_maze(1, 1)
+
+        # Open entrance and exit
+        maze[1][0] = 0
+        maze[height - 2][width - 1] = 0
+
+        return maze
+
+    def handle_resize(self, new_width, new_height) -> None:
         """Handles window resizing."""
         self.width, self.height = new_width, new_height
         self.screen = pygame.display.set_mode(
@@ -201,7 +287,7 @@ class MazeApp:
         )
         self.manager.set_window_resolution((self.width, self.height))
 
-    def run(self):
+    def run(self) -> None:
         """
         Handling events for maze app
         """
@@ -235,20 +321,37 @@ class MazeApp:
                             and self.maze_window.start is not None
                             and self.maze_window.end is not None
                         ):
-                            for row in self.maze_window.grid:
-                                for cell in row:
-                                    cell.update_neighbors(grid=self.maze_window.grid)
+                            self.handle_solve_button()
 
-                            grid = self.maze_window.grid
-                            start = self.maze_window.start
-                            end = self.maze_window.end
-                            algorithm(
-                                lambda: self.maze_window.draw(grid), grid, start, end
-                            )
+                        elif event.ui_element == self.random_generate:
+                            if not self.maze_window:
+                                # Get size from dropdown menu
+                                option = int(self.drop_menu_size.selected_option[0].split("x")[0])
+
+                                # Generate maze using DFS
+                                maze_data = self.generate_maze_array(option, option)
+
+                                # Create MazeWindow and update grid
+                                self.maze_window = MazeWindow(option, 600)
+                                grid = self.maze_window.make_grid()
+
+                                # Map numpy array to grid cells
+                                for i in range(option):
+                                    for j in range(option):
+                                        if maze_data[i][j] == 1:
+                                            grid[i][j].make_barrier()
+
+                                self.maze_window.grid = grid
+                                self.close.show()
+                                self.solve.show()
 
                         elif event.ui_element == self.generate_button:
                             if not self.maze_window:
-                                self.maze_window = MazeWindow(50, 600)
+                                option = int(
+                                    self.drop_menu_size.selected_option[0].split("x")[0]
+                                )
+
+                                self.maze_window = MazeWindow(option, 600)
                                 grid = self.maze_window.make_grid()
                                 self.maze_window.grid = grid
                                 self.close.show()
@@ -256,10 +359,13 @@ class MazeApp:
 
                         elif event.ui_element == self.save_button:
                             print("Save button pressed")
+                            pygame.image.save(self.maze_window.surface, "results/solve.jpg")
 
                     elif event.user_type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
                         file_path = event.text
-                        matrix = self.read_maze(file_path)
+                        _ = self.read_maze(file_path)
+
+                        # TODO maze read from csv
 
                 elif pygame.mouse.get_pressed()[0]:
                     if self.maze_window is not None:
@@ -291,6 +397,7 @@ class MazeApp:
                                 and cell != self.maze_window.end
                             ):
                                 cell.make_barrier()
+
                 elif pygame.mouse.get_pressed()[2]:
 
                     if self.maze_window is not None:
