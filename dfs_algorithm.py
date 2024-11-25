@@ -3,7 +3,7 @@ def dfs_labirynt(matrix):
     Function that works in Deepth first search way to find a way out of the labirynth
     >>> matrix = [
     [1, 1, 1, 1],
-    [2, 0, 0, 1],
+    [0, 0, 2, 1],
     [1, 0, 1, 1],
     [1, 3, 1, 1]
     ]
@@ -40,4 +40,29 @@ def dfs_labirynt(matrix):
                     stack.append((path + d, (new_x, new_y)))
                     matrix[new_x][new_y] = 0
 
-    return "The way not found"
+    return "-1"
+
+# print(dfs_labirynt([[1, 1, 1, 1],[2, 0, 0, 1],[1, 0, 1, 1],[1, 3, 1, 1]]))
+
+
+def res_dfs(matrix):
+    outp = []
+    for i in range(len(matrix)):
+        for j in range(len(matrix[i])):
+            if matrix[i][j] == 2:
+                start = (i, j)
+                outp.append((start))
+    path_dfs = dfs_labirynt(matrix)
+    for i in path_dfs:
+        f = outp[-1]
+        if i == "U":
+            outp.append(((int(f[0])-1), f[1]))
+        elif i == "D":
+            outp.append(((int(f[0])+1), f[1]))
+        elif i == "L":
+            outp.append((f[0], (int(f[1])-1)))
+        elif i == "R":
+            outp.append((f[0], (int(f[1]+1))))
+    return outp
+# print(dfs_labirynt([[1, 1, 1, 1],[0, 0, 2, 1],[1, 0, 1, 1],[1, 3, 1, 1]]))
+# print(res_dfs([[1, 1, 1, 1],[0, 0, 2, 1],[1, 0, 1, 1],[1, 3, 1, 1]]))
