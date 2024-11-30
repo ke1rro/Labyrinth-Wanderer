@@ -1,6 +1,7 @@
 """GUI for maze solving app"""
 
 import csv
+import os
 import random
 import sys
 import threading
@@ -14,10 +15,12 @@ from pygame_gui.core import ObjectID
 
 import colors
 from algos.bfs import bfs_algorithm
+from algos.dijkstra import find_shortest_path
 from dfs import dfs_labirynt
 from maze import GridCell
 from solver import algorithm
 
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../")
 sys.setrecursionlimit(5000)
 
 
@@ -290,6 +293,14 @@ class MazeApp:
                     args=(matrix, grid,
                           lambda: self.maze_window.draw(grid))
                     )
+                solve_thread.start()
+            elif selected_algorithm == "Dijkstra's":
+                print("Dijkstra's")
+                matrix = self.maze_window.make_list()
+                solve_thread = threading.Thread(
+                    target=find_shortest_path,
+                    args=(matrix, lambda: self.maze_window.draw(grid), grid)
+                )
                 solve_thread.start()
 
     def generate_maze_array(self, width: int, height: int) -> np.ndarray:

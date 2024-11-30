@@ -1,9 +1,11 @@
 # Maze solving algorithms
 
-- Breadth First Search
-- Depth First Search
-- A* Search
-- Dijkstra’s Algorithm
+- Breadth First Search - Левицький Тарас
+- Depth First Search - Лукашенко Поліна
+- A* Search - Васильченко Владислав
+- Dijkstra’s Algorithm - Засимович Богдан
+- Gui &  Pathfinding Algorithms implementation into Gui - Леник Нікіта
+
 ---
 
 ## Project Structure

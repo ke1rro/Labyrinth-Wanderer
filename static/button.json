@@ -10,17 +10,17 @@
     {
         "colours":
         {
-            "normal_bg": "#C5FFFD",
-            "hovered_bg": "#35393e",
+            "normal_bg": "#852C7A",
+            "hovered_bg": "#a656e8",
             "disabled_bg": "#25292e",
             "selected_bg": "#25292e",
             "active_bg": "#193784",
-            "normal_text": "#000000",
+            "normal_text": "#8ffbe8",
             "hovered_text": "#FFFFFF",
             "selected_text": "#FFFFFF",
             "disabled_text": "#6d736f",
             "active_text": "#6d736f",
-            "normal_border": "#AAAAAA",
+            "normal_border": "#a656e8",
             "hovered_border": "#B0B0B0",
             "disabled_border": "#808080",
             "selected_border": "#8080B0",
@@ -33,14 +33,28 @@
         },
         "font":
         {
-            "name": "monsterrat",
-            "size": "16"
+            "name": "Helvetica font",
+            "regular_resource": {
+                  "package": "static.fonts",
+                  "resource": "Helvetica-Bold.ttf"
+             },
+            "size": "14",
+            "bont": "1"
         },
         "misc":
         {
+            "border_width": "3",
             "shape": "rounded_rectangle",
-            "shape_corner_radius": "10, 10, 10, 10"
+            "shape_corner_radius": "10, 10, 10, 10",
+            "image":{
+                "normal_image":{
+                    "path": "/Users/nikitalenyk/Desktop/maze_solver/results/requirements.jpeg",
+                    "sub_surface_rect": "0,0,32,32"
+                }
+            }
         }
+
+
     },
 
     "#file_dialog":

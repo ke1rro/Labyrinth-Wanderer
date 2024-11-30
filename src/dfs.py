@@ -92,7 +92,7 @@ def dfs_labirynt(matrix: list, grid: np.array, draw: callable) -> str:
                     if matrix[new_x][new_y] != 3:
                         matrix[new_x][new_y] = -1
                         cell = grid[new_x][new_y]
-                        cell.make_closed()
+                        cell.make_open()
                         draw()
                     if matrix[new_x][new_y] == 3:
                         break
