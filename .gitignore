@@ -157,3 +157,5 @@ astar.py
 test.csv
 gui_test.py
 .gitignore
+maze_debug.py
+src/algos

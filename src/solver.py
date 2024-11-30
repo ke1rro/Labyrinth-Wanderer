@@ -1,80 +1,86 @@
-from collections import deque
-from enum import Enum
-import pygame
+"""Module with algorithms"""
+
+
+from queue import PriorityQueue
+
 import numpy as np
+
 from maze import GridCell
 
-class GraphErrorType(Enum):
-    '''
-    Different types of enum errors.
-    '''
-    NO_START = 'No starting coordinates found'
-    MULTIPLE_STARTS = 'Multiple starting coordinates found'
-    NO_EXIT = 'No exit coordinates found'
-    MULTIPLE_EXITS = 'Multiple exit coordinates found'
-    WRONG_MATRIX_SIZE = ''
 
-class GraphException(Exception):
-    '''
-    Different exceptions related to graphs.
-    '''
-    def __init__(self, error: GraphErrorType):
-        super().__init__(error.value)
+def characteristic_function(p1: tuple[int], p2: tuple[int]) -> int:
+    """
+    The distance of two points
+    """
+    x1, y1 = p1
+    x2, y2 = p2
+    return abs(x1 - x2) + abs(y1 - y2)
 
-def find_start(coord_matrix: np.array) -> GridCell:
-    '''
-    Finds the start of a labyrinth.
-    The start is given as 2.
-    Every labyrinth should
-    '''
-    start_els=[]
-    for row in coord_matrix:
-        for el in row:
-            if el.is_start():
-                start_els.append(el)
-    if len(start_els)==0:
-        return GraphException(GraphErrorType.NO_START)
-    if len(start_els)>2:
-        return GraphException(GraphErrorType.MULTIPLE_STARTS)
-    return start_els[0]
 
-def backtrace(draw: callable, relations: dict,end_node: GridCell):
-    '''
-    Highlights the correct path after the search algorithm is done.
-    '''
-    curr_node = end_node
-    while True:
-        curr_node.make_path()
-        parent = relations[curr_node]
+def reconstruct_path(came_from: dict, current: GridCell,
+                     draw: callable) -> None:
+    """_summary_
+
+    Args:
+        came_from (_type_): _description_
+        current (_type_): _description_
+        draw (_type_): _description_
+    """
+    while current in came_from:
+        current = came_from[current]
+        current.make_path()
         draw()
-        curr_node = parent
-        if curr_node.is_start():
-            break
-def bfs_algorithm(draw: callable, coord_matrix: np.array):
-    '''
-    Finds the shortest path to the exit using the
-    breadth-first-search algorithm.
-    '''
-    start=find_start(coord_matrix)
-    queue = deque(start)
-    relations={} #This is needed to be able to highlight the path afterwards.
-    while queue:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-        curr_node = queue.popleft()
-        if curr_node.is_end():
-            backtrace(draw, relations,curr_node)
+
+
+def algorithm(draw: callable,
+              grid: np.array, start: GridCell, end: GridCell) -> bool:
+    """A star"""
+    count = 0
+    open_set = PriorityQueue()
+    open_set.put((0, count, start))
+    came_from = {}
+
+    g_score = {cell: float("inf") for row in grid for cell in row}
+    g_score[start] = 0
+
+    f_score = {cell: float("inf") for row in grid for cell in row}
+    f_score[start] = characteristic_function(start.get_pos(), end.get_pos())
+
+    open_set_hash = {start}
+    node_update_count = 0
+    update_threshold = 10
+
+    while not open_set.empty():
+        current_node: GridCell = open_set.get()[2]
+        open_set_hash.remove(current_node)
+
+        if current_node == end:
+            reconstruct_path(came_from, end, draw)
+            start.make_start()
+            end.make_end()
             return True
-        if not curr_node.is_start():
-            curr_node.make_closed()
-        curr_node.update_neighbors(coord_matrix)
-        for neighbor in curr_node.neighbors:
-            if neighbor.is_open() and not neighbor.is_start():
-                queue.append(neighbor)
-                relations[neighbor] = curr_node
-            if neighbor.is_end():
-                queue.appendleft(neighbor)
-                relations[neighbor] = curr_node
-        draw()
+
+        for neighbor in current_node.neighbors:
+            temp_g_score = g_score[current_node] + 1
+
+            if temp_g_score < g_score[neighbor]:
+                came_from[neighbor] = current_node
+                g_score[neighbor] = temp_g_score
+                f_score[neighbor] = temp_g_score + characteristic_function(
+                    neighbor.get_pos(), end.get_pos()
+                )
+
+                if neighbor not in open_set_hash:
+                    count += 1
+                    open_set.put((f_score[neighbor], count, neighbor))
+                    open_set_hash.add(neighbor)
+                    neighbor.make_open()
+
+        if current_node != start:
+            current_node.make_closed()
+
+        node_update_count += 1
+        if node_update_count % update_threshold == 0:
+            draw()  # Redraw periodically to avoid flickering
+
     return False
