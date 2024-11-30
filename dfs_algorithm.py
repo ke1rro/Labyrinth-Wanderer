@@ -7,7 +7,7 @@ def dfs_labirynt(matrix):
     [1, 0, 1, 1],
     [1, 3, 1, 1]
     ]
-    DDR
+    LDD
     '''
     start = None
     end = None
@@ -36,9 +36,9 @@ def dfs_labirynt(matrix):
             new_x = x + move[0]
             new_y = y + move[1]
             if 0 <= new_x < len(matrix) and 0 <= new_y < len(matrix[0]):
-                if matrix[new_x][new_y] != 0:
+                if matrix[new_x][new_y] != 1:
                     stack.append((path + d, (new_x, new_y)))
-                    matrix[new_x][new_y] = 0
+                    matrix[new_x][new_y] = 1
 
     return "-1"
 
@@ -46,6 +46,15 @@ def dfs_labirynt(matrix):
 
 
 def res_dfs(matrix):
+    """Transfers coordinates as letters into list of tuples
+
+    Args:
+        matrix (list): coordinates to transform
+
+    Returns:
+        list: list of tuples - coordinates
+    
+    """
     outp = []
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
@@ -64,5 +73,5 @@ def res_dfs(matrix):
         elif i == "R":
             outp.append((f[0], (int(f[1]+1))))
     return outp
-# print(dfs_labirynt([[1, 1, 1, 1],[0, 0, 2, 1],[1, 0, 1, 1],[1, 3, 1, 1]]))
-# print(res_dfs([[1, 1, 1, 1],[0, 0, 2, 1],[1, 0, 1, 1],[1, 3, 1, 1]]))
+print(dfs_labirynt([[1, 1, 1, 1],[0, 0, 2, 1],[1, 0, 1, 1],[1, 3, 1, 1]]))
+print(res_dfs([[1, 1, 1, 1],[0, 0, 2, 1],[1, 0, 1, 1],[1, 3, 1, 1]]))
