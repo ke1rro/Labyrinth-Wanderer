@@ -1,4 +1,8 @@
-# Maze solving algorithms
+# Labyrinth Wanderer
+
+![alt text](img/LabWanderer.png)
+
+## Maze solving algorithms
 
 - Breadth First Search - Левицький Тарас
 - Depth First Search - Лукашенко Поліна
@@ -35,14 +39,6 @@ pygame_gui==0.6.12
 ```bash
 pip install -r requirements.txt
 ```
-
-## Useful links
-
-- https://en.wikipedia.org/wiki/Maze-solving_algorithm
-- https://bryukh.com/labyrinth-algorithms/
-- https://matteo-tosato7.medium.com/exploring-the-depths-solving-mazes-with-a-search-algorithm-c15253104899
-- More about maze generating
-    - https://www.youtube.com/watch?v=jZQ31-4_8KM&t=96s
 
 ## IF YOU WANT TO IMPLEMENT ANY ALGORITHM FOLLOW THIS STEPS
 

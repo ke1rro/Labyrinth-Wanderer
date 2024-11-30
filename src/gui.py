@@ -14,7 +14,7 @@ import pygame_gui.windows.ui_file_dialog
 from pygame_gui.core import ObjectID
 
 import colors
-from algos.bfs import bfs_algorithm
+from bfs import bfs_algorithm
 from algos.dijkstra import find_shortest_path
 from dfs import dfs_labirynt
 from maze import GridCell
@@ -299,7 +299,7 @@ class MazeApp:
                 matrix = self.maze_window.make_list()
                 solve_thread = threading.Thread(
                     target=find_shortest_path,
-                    args=(matrix, lambda: self.maze_window.draw(grid), grid)
+                    args=(np.array(matrix), lambda: self.maze_window.draw(grid), grid)
                 )
                 solve_thread.start()
 
