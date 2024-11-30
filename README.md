@@ -4,7 +4,7 @@
 - Depth First Search - Лукашенко Поліна
 - A* Search - Васильченко Владислав
 - Dijkstra’s Algorithm - Засимович Богдан
-- Gui &  Pathfinding Algorithms implementation into Gui - Леник Нікіта
+- Gui & code reviews - Леник Нікіта
 
 ---
 
