@@ -1,9 +1,9 @@
 """Module with algorithms"""
 
+
 from queue import PriorityQueue
 
 import numpy as np
-import pygame
 
 from maze import GridCell
 
@@ -17,7 +17,8 @@ def characteristic_function(p1: tuple[int], p2: tuple[int]) -> int:
     return abs(x1 - x2) + abs(y1 - y2)
 
 
-def reconstruct_path(came_from: dict, current: GridCell, draw: callable) -> None:
+def reconstruct_path(came_from: dict, current: GridCell,
+                     draw: callable) -> None:
     """_summary_
 
     Args:
@@ -31,7 +32,9 @@ def reconstruct_path(came_from: dict, current: GridCell, draw: callable) -> None
         draw()
 
 
-def algorithm(draw: callable, grid: np.array, start: GridCell, end: GridCell) -> bool:
+def algorithm(draw: callable,
+              grid: np.array, start: GridCell, end: GridCell) -> bool:
+    """A star"""
     count = 0
     open_set = PriorityQueue()
     open_set.put((0, count, start))
@@ -44,20 +47,19 @@ def algorithm(draw: callable, grid: np.array, start: GridCell, end: GridCell) ->
     f_score[start] = characteristic_function(start.get_pos(), end.get_pos())
 
     open_set_hash = {start}
+    node_update_count = 0
+    update_threshold = 10
 
     while not open_set.empty():
-        # Retrieve the current node with the lowest f_score
         current_node: GridCell = open_set.get()[2]
         open_set_hash.remove(current_node)
 
-        # Check if we have reached the end
         if current_node == end:
             reconstruct_path(came_from, end, draw)
             start.make_start()
             end.make_end()
             return True
 
-        # Explore neighbors
         for neighbor in current_node.neighbors:
             temp_g_score = g_score[current_node] + 1
 
@@ -72,14 +74,13 @@ def algorithm(draw: callable, grid: np.array, start: GridCell, end: GridCell) ->
                     count += 1
                     open_set.put((f_score[neighbor], count, neighbor))
                     open_set_hash.add(neighbor)
-                    neighbor.make_open()  # Mark as open
+                    neighbor.make_open()
 
-        # Mark the current node as visited
         if current_node != start:
             current_node.make_closed()
 
-        draw()
-
-        pygame.time.wait(20)
+        node_update_count += 1
+        if node_update_count % update_threshold == 0:
+            draw()  # Redraw periodically to avoid flickering
 
     return False

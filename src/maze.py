@@ -29,20 +29,30 @@ class GridCell:
         self.neighbors = []
         self.total_rows = total_rows
 
-    def get_pos(self) -> int:
+    def get_maze_pos(self) -> tuple[int]:
         """
-        Returns the position of cell
+        Returns the position of the cell in maze
+        """
+        return self.row, self.col
+
+    def get_pos(self) -> tuple[int]:
+        """
+        Returns the position of cell on window
         """
         return self.x, self.y
 
     # Methods for the state of cell
+    def is_unvisited(self) -> bool:
+        """Checks if the cell is untracked"""
+        return self.color == colors.WHITE
+
     def is_closed(self) -> bool:
         """Check if the cell is visited."""
         return self.color == colors.RED
 
     def is_open(self) -> bool:
         """Check if the cell can be visited."""
-        return self.color == colors.WHITE
+        return self.color == colors.GREEN
 
     def is_barrier(self) -> bool:
         """Checks if the cell is the wall of the maze."""
@@ -86,31 +96,36 @@ class GridCell:
 
     def draw_cell(self, window: pygame.Surface) -> None:
         """Draw the cell to form the grid of the maze."""
-        pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.width))
+        pygame.draw.rect(window, self.color,
+                         (self.x, self.y, self.width, self.width))
 
     def update_neighbors(self, grid: np.array) -> None:
         """Check for the up, down, left, right neighbors"""
 
         self.neighbors = []
-        # DOWN
         if (
             self.row < self.total_rows - 1
             and not grid[self.row + 1][self.col].is_barrier()
-        ):
+        ):  # DOWN
             self.neighbors.append(grid[self.row + 1][self.col])
-        # UP
-        if self.row > 0 and not grid[self.row - 1][self.col].is_barrier():
+
+        if (
+            self.row > 0
+            and not grid[self.row - 1][self.col].is_barrier()
+         ):  # UP
             self.neighbors.append(grid[self.row - 1][self.col])
 
-        # LEFT
-        if self.col > 0 and not grid[self.row][self.col - 1].is_barrier():
-            self.neighbors.append(grid[self.row][self.col - 1])
-        # RIGHT
         if (
             self.col < self.total_rows - 1
             and not grid[self.row][self.col + 1].is_barrier()
-        ):
+        ):  # RIGHT
             self.neighbors.append(grid[self.row][self.col + 1])
+
+        if (
+            self.col > 0
+            and not grid[self.row][self.col - 1].is_barrier()
+        ):  # LEFT
+            self.neighbors.append(grid[self.row][self.col - 1])
 
     def __lt__(self, other: object) -> bool:
         """
