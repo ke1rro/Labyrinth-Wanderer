@@ -14,7 +14,7 @@ from pygame_gui.core import ObjectID
 
 import colors
 from algos.bfs import bfs_algorithm
-from algos.dfs import dfs_labirynt
+from dfs import dfs_labirynt
 from maze import GridCell
 from solver import algorithm
 
@@ -105,14 +105,7 @@ class MazeWindow:
         1 is a wall
         0 is a path
         """
-        # matrix = [
-        #     2 if cell.is_start() else
-        #     3 if cell.is_end() else
-        #     1 if cell.is_barrier() else
-        #     0
-        #     for row in self.grid for cell in row
-        # ]
-        # return matrix
+
         matrix = []
         for row in self.grid:
             matrix.append([

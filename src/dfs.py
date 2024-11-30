@@ -89,9 +89,12 @@ def dfs_labirynt(matrix: list, grid: np.array, draw: callable) -> str:
             if 0 <= new_x < len(matrix) and 0 <= new_y < len(matrix[0]):
                 if matrix[new_x][new_y] == 0 or matrix[new_x][new_y] == 3:
                     stack.append((path_str + direction, (new_x, new_y)))
-                    matrix[new_x][new_y] = -1
-                    cell = grid[new_x][new_y]
-                    cell.make_closed()
-                    draw()
+                    if matrix[new_x][new_y] != 3:
+                        matrix[new_x][new_y] = -1
+                        cell = grid[new_x][new_y]
+                        cell.make_closed()
+                        draw()
+                    if matrix[new_x][new_y] == 3:
+                        break
 
     return -1
