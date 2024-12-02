@@ -1,6 +1,5 @@
 """Module with algorithms"""
 
-
 from queue import PriorityQueue
 
 import numpy as np
@@ -17,8 +16,8 @@ def characteristic_function(p1: tuple[int], p2: tuple[int]) -> int:
     return abs(x1 - x2) + abs(y1 - y2)
 
 
-def reconstruct_path(came_from: dict, current: GridCell,
-                     draw: callable) -> None:
+def reconstruct_path(came_from: dict,
+                     current: GridCell, draw: callable) -> None:
     """_summary_
 
     Args:
@@ -32,8 +31,8 @@ def reconstruct_path(came_from: dict, current: GridCell,
         draw()
 
 
-def algorithm(draw: callable,
-              grid: np.array, start: GridCell, end: GridCell) -> bool:
+def algorithm(draw: callable, grid: np.array,
+              start: GridCell, end: GridCell) -> bool:
     """A star"""
     count = 0
     open_set = PriorityQueue()

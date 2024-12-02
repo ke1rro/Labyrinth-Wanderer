@@ -3,14 +3,17 @@ from queue import PriorityQueue
 import numpy as np
 
 
-def matrix_to_adj_dict(maze: np.array) -> tuple[dict[tuple, set], tuple, tuple]:
+def matrix_to_adj_dict(maze: np.array) -> tuple[dict[tuple, set],
+                                                tuple, tuple]:
     """
-    Converts a maze represented as a 2D NumPy array into an adjacency dictionary.
+    Converts a maze represented as a 2D NumPy
+    array into an adjacency dictionary.
 
-    Each key in the adjacency dictionary represents a non-wall cell (as a tuple of coordinates),
+    Each key in the adjacency dictionary represents
+    a non-wall cell (as a tuple of coordinates),
     and its value is a set of adjacent non-wall cells.
 
-    The function also identifies the start and end points in the maze. 
+    The function also identifies the start and end points in the maze.
 
     Args:
         maze (np.ndarray): A 2D NumPy array where:
@@ -21,10 +24,11 @@ def matrix_to_adj_dict(maze: np.array) -> tuple[dict[tuple, set], tuple, tuple]:
 
     Returns:
         tuple: A tuple containing:
-            - dict[tuple[int, int], set[tuple[int, int]]]: An adjacency dictionary of the maze.
+            - dict[tuple[int, int], set[tuple[int, int]]]:
+            An adjacency dictionary of the maze.
             - tuple[int, int]: The coordinates of the start point.
             - tuple[int, int]: The coordinates of the end point.
-    
+
     Examples:
         >>> matrix = np.array([[1, 2, 1, 1],
         ...                    [1, 1, 1, 1],
@@ -74,9 +78,11 @@ def matrix_to_adj_dict(maze: np.array) -> tuple[dict[tuple, set], tuple, tuple]:
     return adjacent_dict, start, end
 
 
-def dijkstra(maze: dict[tuple: set], start: tuple, end: tuple) -> dict[tuple, list] | int:
+def dijkstra(maze: dict[tuple: set],
+             start: tuple, end: tuple) -> dict[tuple, list] | int:
     """
-    Finds the shortest path in a maze from the start to the end point using Dijkstra's algorithm.
+    Finds the shortest path in a maze
+    from the start to the end point using Dijkstra's algorithm.
 
     Args:
         maze (dict): An adjacency dictionary where:
@@ -86,14 +92,15 @@ def dijkstra(maze: dict[tuple: set], start: tuple, end: tuple) -> dict[tuple, li
         end (tuple): The coordinates of the end point.
 
     Returns:
-        dict[tuple[int, int], list] | int: If a path exists, returns a dictionary where:
+        dict[tuple[int, int], list] | int: If a path exists,
+        returns a dictionary where:
             - Keys are cell coordinates.
             - Values are lists containing:
                 - The shortest distance to the cell.
                 - A boolean indicating whether the cell has been visited.
                 - The previous cell on the shortest path.
             If no path exists, returns -1.
-    
+
     Example:
         >>> adj_dict, start, end = ({
         ... (0, 1): {(1, 1)},
@@ -155,7 +162,7 @@ def reconstruct_path(graph: dict, start: tuple, end: tuple) -> list[tuple]:
         end (tuple): The coordinates of the end point.
 
     Returns:
-        list[tuple[int, int]]: A list of tuples representing the shortest path, 
+        list[tuple[int, int]]: A list of tuples representing the shortest path,
         starting from the start point and ending at the end point.
 
     Examples:
@@ -192,9 +199,11 @@ def find_shortest_path(maze_matrix: np.array) -> list[tuple] | int:
             - 3 represents the end point.
 
     Returns:
-        list[tuple[int, int]] | int: If a path exists, returns a list of tuples representing the 
-        shortest path from the start to the end point. If no path exists, returns -1.
-    
+        list[tuple[int, int]] | int: If a path exists,
+        returns a list of tuples representing the
+        shortest path from the start to the end point.
+        If no path exists, returns -1.
+
     Examples:
         >>> matrix = np.array([[1, 2, 1, 1],
         ...                    [1, 0, 1, 1],

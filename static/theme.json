@@ -1,0 +1,145 @@
+{
+    "@menu": {
+        "colours": {
+            "normal_bg": "#852C7A",
+            "hovered_bg": "#a656e8",
+            "disabled_bg": "#25292e",
+            "selected_bg": "#25292e",
+            "active_bg": "#193784",
+            "normal_text": "#8ffbe8",
+            "hovered_text": "#FFFFFF",
+            "selected_text": "#FFFFFF",
+            "disabled_text": "#6d736f",
+            "active_text": "#6d736f",
+            "normal_border": "#a656e8",
+            "hovered_border": "#B0B0B0",
+            "disabled_border": "#808080",
+            "selected_border": "#8080B0",
+            "active_border": "#8080B0",
+            "normal_text_shadow": "#10101070",
+            "hovered_text_shadow": "#10101070",
+            "disabled_text_shadow": "#10101070",
+            "selected_text_shadow": "#10101070",
+            "active_text_shadow": "#10101070"
+        },
+        "font": {
+            "name": "Helvetica font",
+            "regular_resource": {
+                "package": "static.fonts",
+                "resource": "TiltNeon-Regular.ttf"
+            },
+            "size": "14",
+            "bold": "1"
+        },
+        "misc": {
+            "border_width": "3",
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "10, 10, 10, 10"
+        }
+    },
+    "drop_down_menu": {
+        "prototype": "@menu",
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "4",
+            "border_width": "1",
+            "open_button_width": "20",
+            "expand_direction": "down"
+        },
+        "colours": {
+            "dark_bg": "#6d50ff",
+            "normal_border": "#a656e8",
+            "hovered_bg": "#a656e8",
+            "disabled_dark_bg": "#6d50ff",
+            "disabled_border": "#6d50ff"
+        },
+        "font": {
+            "name": "Helvetica font",
+            "regular_resource": {
+                "package": "static.fonts",
+                "resource": "TiltNeon-Regular.ttf"
+            },
+            "size": "14",
+            "bold": "1"
+        }
+    },
+    "drop_down_menu.#selected_option": {
+        "prototype": "drop_down_menu",
+        "colours": {
+            "dark_bg": "#6d50ff",
+            "normal_border": "#a656e8",
+            "hovered_bg": "#a656e8",
+            "disabled_dark_bg": "#6d50ff",
+            "disabled_border": "#6d50ff"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "4",
+            "border_width": "1",
+            "open_button_width": "20"
+        },
+        "font": {
+            "name": "Helvetica font",
+            "regular_resource": {
+                "package": "static.fonts",
+                "resource": "TiltNeon-Regular.ttf"
+            },
+            "size": "14",
+            "bold": "1"
+        }
+    },
+    "drop_down_menu.#drop_down_options_list": {
+        "prototype": "drop_down_menu",
+        "colours": {
+            "dark_bg": "#6d50ff",
+            "normal_border": "#a656e8",
+            "hovered_bg": "#a656e8",
+            "disabled_dark_bg": "#6d50ff",
+            "disabled_border": "#6d50ff"
+        },
+        "misc": {
+            "shadow_width": "2",
+            "border_width": "1",
+            "enable_arrow_buttons": "1"
+        },
+        "font": {
+            "name": "Helvetica font",
+            "regular_resource": {
+                "package": "static.fonts",
+                "resource": "TiltNeon-Regular.ttf"
+            },
+            "size": "14",
+            "bold": "1"
+        }
+    },
+    "#file_dialog": {
+        "colours": {
+            "dark_bg": "#4848434",
+            "normal_border": "#999999"
+        }
+    },
+    "button": {
+        "colours": {
+            "normal_bg": "#852C7A",
+            "hovered_bg": "#a656e8",
+            "disabled_bg": "#25292e",
+            "selected_bg": "#25292e",
+            "active_bg": "#a656e8",
+            "normal_text": "#8ffbe8",
+            "hovered_text": "#8ffbe8",
+            "selected_text": "#8ffbe8",
+            "disabled_text": "#8ffbe8",
+            "active_text": "#8ffbe8",
+            "normal_border": "#a656e8",
+            "hovered_border": "#a656e8",
+            "disabled_border": "#a656e8",
+            "selected_border": "#a656e8",
+            "active_border": "#a656e8",
+            "normal_text_shadow": "#a656e8",
+            "hovered_text_shadow": "#a656e8",
+            "disabled_text_shadow": "#a656e8",
+            "selected_text_shadow": "#a656e8",
+            "active_text_shadow": "#a656e8"
+        }
+    }
+}

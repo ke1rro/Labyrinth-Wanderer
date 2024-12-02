@@ -1,6 +1,10 @@
+"""DFS"""
+
+
 def dfs_labirynt(matrix):
     '''
-    Function that works in Deepth first search way to find a way out of the labirynth
+    Function that works in Deepth first
+    search way to find a way out of the labirynth
     >>> matrix = [
     [1, 1, 1, 1],
     [0, 0, 2, 1],
@@ -42,8 +46,6 @@ def dfs_labirynt(matrix):
 
     return "-1"
 
-# print(dfs_labirynt([[1, 1, 1, 1],[2, 0, 0, 1],[1, 0, 1, 1],[1, 3, 1, 1]]))
-
 
 def res_dfs(matrix):
     """Transfers coordinates as letters into list of tuples
@@ -53,7 +55,7 @@ def res_dfs(matrix):
 
     Returns:
         list: list of tuples - coordinates
-    
+
     """
     outp = []
     for i in range(len(matrix)):
@@ -73,5 +75,7 @@ def res_dfs(matrix):
         elif i == "R":
             outp.append((f[0], (int(f[1]+1))))
     return outp
-print(dfs_labirynt([[1, 1, 1, 1],[0, 0, 2, 1],[1, 0, 1, 1],[1, 3, 1, 1]]))
-print(res_dfs([[1, 1, 1, 1],[0, 0, 2, 1],[1, 0, 1, 1],[1, 3, 1, 1]]))
+
+
+print(dfs_labirynt([[1, 1, 1, 1], [0, 0, 2, 1], [1, 0, 1, 1], [1, 3, 1, 1]]))
+print(res_dfs([[1, 1, 1, 1], [0, 0, 2, 1], [1, 0, 1, 1], [1, 3, 1, 1]]))
