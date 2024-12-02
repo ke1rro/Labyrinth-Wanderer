@@ -4,7 +4,7 @@ from queue import PriorityQueue
 import numpy as np
 
 
-def matrix_to_adj_dict(maze: np.ndarray) -> dict[tuple, set]:
+def matrix_to_adj_dict(maze: np.ndarray) -> tuple[dict[tuple, set], tuple, tuple]:
     """
     Converts a maze represented as a 2D NumPy array into an adjacency
     dictionary.
