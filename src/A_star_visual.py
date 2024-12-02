@@ -5,7 +5,8 @@ import heapq
 import numpy as np
 
 
-def a_star_manhattan(grid: license, grid_cells: np.array, draw: callable):
+def a_star_manhattan(grid: license, grid_cells: np.array, draw: callable,
+                     end_callback: callable = None) -> tuple:
     """
     A* algorithm implementation with Manhattan distance heuristic.
 
@@ -49,6 +50,7 @@ def a_star_manhattan(grid: license, grid_cells: np.array, draw: callable):
 
         # If the goal is reached, reconstruct the path
         if current == goal:
+            end_callback()
             path = []
             while current in came_from:
                 x, y = current

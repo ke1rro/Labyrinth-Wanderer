@@ -32,7 +32,8 @@ def reconstruct_path(came_from: dict,
 
 
 def algorithm(draw: callable, grid: np.array,
-              start: GridCell, end: GridCell) -> bool:
+              start: GridCell, end: GridCell,
+              end_callback: callable = None) -> bool:
     """A star"""
     count = 0
     open_set = PriorityQueue()
@@ -54,6 +55,7 @@ def algorithm(draw: callable, grid: np.array,
         open_set_hash.remove(current_node)
 
         if current_node == end:
+            end_callback()
             reconstruct_path(came_from, end, draw)
             start.make_start()
             end.make_end()

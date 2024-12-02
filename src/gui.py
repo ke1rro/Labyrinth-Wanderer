@@ -5,6 +5,7 @@ import os
 import random
 import sys
 import threading
+import time
 
 import numpy as np
 import pygame
@@ -14,7 +15,7 @@ import pygame_gui.windows.ui_file_dialog
 from pygame_gui.core import ObjectID
 
 import colors
-from algos.a_star import a_star_manhattan
+from A_star_visual import a_star_manhattan
 from bfs import bfs_algorithm
 from dfs import dfs_labirynt
 from dijkstra import find_shortest_path
@@ -115,13 +116,16 @@ class MazeWindow:
 
         matrix = []
         for row in self.grid:
-            matrix.append([
-                1 if cell.is_barrier() else
-                2 if cell.is_start() else
-                3 if cell.is_end() else
-                0
-                for cell in row
-            ])
+            matrix.append(
+                [
+                    (
+                        1
+                        if cell.is_barrier()
+                        else 2 if cell.is_start() else 3 if cell.is_end() else 0
+                    )
+                    for cell in row
+                ]
+            )
         return matrix
 
 
@@ -130,15 +134,13 @@ class MazeApp:
 
     def __init__(self, height=1000, width=1600):
         pygame.init()
-        self.screen = pygame.display.set_mode((width, height),
-                                              pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Labyrinth Wanderer")
         self.width, self.height = width, height
         self.running = True
         theme_path = "static/theme.json"
-        self.manager = pygame_gui.UIManager((width, height),
-                                            theme_path=theme_path)
+        self.manager = pygame_gui.UIManager((width, height), theme_path=theme_path)
 
         self.upload_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(25, self.height // 2 - 125, 150, 50),
@@ -184,9 +186,17 @@ class MazeApp:
         )
 
         self.drop_menu_size = pygame_gui.elements.UIDropDownMenu(
-            options_list=["10x10", "20x20", "25x25",
-                          "50x50", "100x100", "150x150",
-                          "200x200", "300x300", "400x400"],
+            options_list=[
+                "10x10",
+                "20x20",
+                "25x25",
+                "50x50",
+                "100x100",
+                "150x150",
+                "200x200",
+                "300x300",
+                "400x400",
+            ],
             starting_option="50x50",
             relative_rect=pygame.Rect(1350, self.height // 2 - 300, 150, 50),
             manager=self.manager,
@@ -203,20 +213,23 @@ class MazeApp:
         self.logo = pygame_gui.elements.UIImage(
             relative_rect=pygame.Rect(1250, 400, 250, 250),
             image_surface=pygame.image.load("img/LabWanderer.png"),
-            manager=self.manager
+            manager=self.manager,
         )
 
+        self.timer_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect(1000, self.height // 2 + 225, 700, 100),
+            text="Execution Time: 0.00s",
+            manager=self.manager,
+            object_id=ObjectID(class_id="@text"),
+        )
         # key - number of rows, value - size of the canvas
-        self.canvas_size = {150: 600,
-                            200: 800,
-                            100: 800,
-                            300: 900,
-                            400: 800}
+        self.canvas_size = {150: 600, 200: 800, 100: 800, 300: 900, 400: 800}
 
         self.solve.hide()
         self.close.hide()
         self.file_dialog_window = None
         self.maze_window = None
+        self.execution_time = None
 
     def file_dialog(self) -> pygame_gui.windows.UIFileDialog:
         """Creates and returns a centered file dialog."""
@@ -260,8 +273,7 @@ class MazeApp:
                 for row in data:
                     if not row or all(cell.strip() == "" for cell in row):
                         continue
-                    maze.append(
-                        [0 if cell.strip() == "." else 1 for cell in row])
+                    maze.append([0 if cell.strip() == "." else 1 for cell in row])
             else:
                 for line in f:
                     line = line.strip()
@@ -285,49 +297,45 @@ class MazeApp:
 
             start = self.maze_window.start
             end = self.maze_window.end
+            start_time = 0
 
+        def end_callback():
+            """Callback function which
+            triggers when algorithm finds the end"""
+            elapsed_time = time.time() - start_time
+            self.execution_time = elapsed_time
+
+        def solve_algorithm():
+            """Thread function to solve the maze and measure the time"""
+            nonlocal start_time
+            start_time = time.time()
             if selected_algorithm == "BFS":
-                print("BFS")
-                solve_thread = threading.Thread(
-                    target=bfs_algorithm,
-                    args=(lambda: self.maze_window.draw(grid), grid),
-                )
-                solve_thread.start()
+                bfs_algorithm(lambda: self.maze_window.draw(grid), grid, end_callback)
             elif selected_algorithm == "A-star":
-                print("A*")
                 matrix = self.maze_window.make_list()
-                solve_thread = threading.Thread(
-                    target=a_star_manhattan,
-                    args=(matrix, grid, lambda: self.maze_window.draw(grid),
-                          ))
-
-                solve_thread.start()
+                a_star_manhattan(
+                    matrix, grid, lambda: self.maze_window.draw(grid), end_callback
+                )
             elif selected_algorithm == "DFS":
-                print("DFS")
                 matrix = self.maze_window.make_list()
-                solve_thread = threading.Thread(
-                    target=dfs_labirynt,
-                    args=(matrix, grid,
-                          lambda: self.maze_window.draw(grid))
-                    )
-                solve_thread.start()
+                dfs_labirynt(
+                    matrix, grid, lambda: self.maze_window.draw(grid), end_callback
+                )
             elif selected_algorithm == "Dijkstra's":
-                print("Dijkstra's")
                 matrix = self.maze_window.make_list()
-                solve_thread = threading.Thread(
-                    target=find_shortest_path,
-                    args=(np.array(matrix),
-                          lambda: self.maze_window.draw(grid), grid)
+                find_shortest_path(
+                    np.array(matrix),
+                    lambda: self.maze_window.draw(grid),
+                    grid,
+                    end_callback,
                 )
-                solve_thread.start()
-
             elif selected_algorithm == "A-start-gui":
-                solve_thread = threading.Thread(
-                    target=algorithm,
-                    args=(lambda: self.maze_window.draw(grid),
-                          grid, start, end)
+                algorithm(
+                    lambda: self.maze_window.draw(grid), grid, start, end, end_callback
                 )
-                solve_thread.start()
+
+        solve_thread = threading.Thread(target=solve_algorithm)
+        solve_thread.start()
 
     def generate_maze_array(self, width: int, height: int) -> np.ndarray:
         """
@@ -354,10 +362,7 @@ class MazeApp:
                     x + dx * 2,
                     y + dy * 2,
                 )  # Move two steps in the chosen direction
-                if (
-                    1 <= nx < width - 1
-                    and 1 <= ny < height - 1 and maze[ny][nx] == 1
-                ):
+                if 1 <= nx < width - 1 and 1 <= ny < height - 1 and maze[ny][nx] == 1:
                     # Carve the path
                     maze[y + dy][x + dx] = 0  # Open the intermediate cell
                     maze[ny][nx] = 0  # Open the target cell
@@ -407,10 +412,7 @@ class MazeApp:
                             self.file_dialog_window = self.file_dialog()
                             self.file_dialog_window.show()
 
-                        elif (
-                            event.ui_element == self.close
-                            and self.close is not None
-                              ):
+                        elif event.ui_element == self.close and self.close is not None:
 
                             self.maze_window = None
                             grid_draw = False
@@ -438,15 +440,15 @@ class MazeApp:
 
                                 size = (
                                     self.canvas_size[option]
-                                    if option in self.canvas_size else 800
-                                    )
+                                    if option in self.canvas_size
+                                    else 800
+                                )
 
                                 if option >= 100:
                                     grid_draw = False
 
                                 # Generate maze using DFS
-                                maze_data = self.generate_maze_array(option,
-                                                                     option)
+                                maze_data = self.generate_maze_array(option, option)
 
                                 # Create MazeWindow and update grid
                                 self.maze_window = MazeWindow(option, size)
@@ -472,8 +474,9 @@ class MazeApp:
 
                                 size = (
                                     self.canvas_size[option]
-                                    if option in self.canvas_size else 800
-                                    )
+                                    if option in self.canvas_size
+                                    else 800
+                                )
                                 if option >= 100:
                                     grid_draw = False
 
@@ -487,8 +490,7 @@ class MazeApp:
                         elif event.ui_element == self.save_button:
                             if self.maze_window:
                                 pygame.image.save(
-                                    self.maze_window.surface,
-                                    "results/solution.jpg"
+                                    self.maze_window.surface, "results/solution.jpg"
                                 )
 
                     elif event.user_type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
@@ -503,8 +505,9 @@ class MazeApp:
                             if option == col:
                                 size = (
                                     self.canvas_size[option]
-                                    if option in self.canvas_size else 800
-                                    )
+                                    if option in self.canvas_size
+                                    else 800
+                                )
                                 if option >= 100:
                                     grid_draw = False
 
@@ -557,8 +560,7 @@ class MazeApp:
                         maze_rect = self.maze_window.surface.get_rect()
                         maze_rect.center = (self.width // 2, self.height // 2)
                         if maze_rect.collidepoint(pos):
-                            adjusted_pos = (pos[0] - maze_rect.x,
-                                            pos[1] - maze_rect.y)
+                            adjusted_pos = (pos[0] - maze_rect.x, pos[1] - maze_rect.y)
                             row, col = self.maze_window.get_mouse_click_pos_on_grid(
                                 adjusted_pos
                             )
@@ -578,13 +580,19 @@ class MazeApp:
             if self.maze_window:
                 self.maze_window.draw(self.maze_window.grid, grid_draw)
                 maze_rect = self.maze_window.surface.get_rect()
-                # Center the maze, but constrain it to window bounds
+
+                # Center the maze based on main windows bounds
                 maze_rect.center = (
                     min(self.width // 2, self.width - maze_rect.width // 2),
-                    min(self.height // 2, self.height - maze_rect.height // 2)
-                    )
+                    min(self.height // 2, self.height - maze_rect.height // 2),
+                )
 
                 self.screen.blit(self.maze_window.surface, maze_rect)
+
+            if self.execution_time is not None:
+                rounded_time = round(self.execution_time, 2)
+                self.timer_label.set_text(f"Execution time: {str(rounded_time)}s")
+                self.execution_time = None
 
             self.manager.update(time_delta)
             self.manager.draw_ui(self.screen)

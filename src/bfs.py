@@ -59,7 +59,8 @@ def backtrace(draw: callable, relations: dict, end_node: GridCell):
             break
 
 
-def bfs_algorithm(draw: callable, coord_matrix: np.array):
+def bfs_algorithm(draw: callable, coord_matrix: np.array,
+                  end_callback: callable = None) -> bool:
     """
     Finds the shortest path to the exit using the
     breadth-first-search algorithm.
@@ -76,6 +77,7 @@ def bfs_algorithm(draw: callable, coord_matrix: np.array):
         curr_node = queue.popleft()
 
         if curr_node.is_end():
+            end_callback()
             backtrace(draw, relations, curr_node)
             return True
 
