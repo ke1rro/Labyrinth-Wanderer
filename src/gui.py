@@ -14,6 +14,7 @@ import pygame_gui.windows.ui_file_dialog
 from pygame_gui.core import ObjectID
 
 import colors
+from algos.a_star import a_star_manhattan
 from bfs import bfs_algorithm
 from dfs import dfs_labirynt
 from dijkstra import find_shortest_path
@@ -175,7 +176,7 @@ class MazeApp:
         )
 
         self.drop_menu_alg = pygame_gui.elements.UIDropDownMenu(
-            options_list=["BFS", "DFS", "A-star", "Dijkstra's"],
+            options_list=["BFS", "DFS", "A-star", "Dijkstra's", "A-start-gui"],
             starting_option="A-star",
             relative_rect=pygame.Rect(25, self.height // 2 - 300, 150, 50),
             manager=self.manager,
@@ -294,11 +295,12 @@ class MazeApp:
                 solve_thread.start()
             elif selected_algorithm == "A-star":
                 print("A*")
+                matrix = self.maze_window.make_list()
                 solve_thread = threading.Thread(
-                    target=algorithm,
-                    args=(lambda: self.maze_window.draw(grid),
-                          grid, start, end),
-                )
+                    target=a_star_manhattan,
+                    args=(matrix, grid, lambda: self.maze_window.draw(grid),
+                          ))
+
                 solve_thread.start()
             elif selected_algorithm == "DFS":
                 print("DFS")
@@ -316,6 +318,14 @@ class MazeApp:
                     target=find_shortest_path,
                     args=(np.array(matrix),
                           lambda: self.maze_window.draw(grid), grid)
+                )
+                solve_thread.start()
+
+            elif selected_algorithm == "A-start-gui":
+                solve_thread = threading.Thread(
+                    target=algorithm,
+                    args=(lambda: self.maze_window.draw(grid),
+                          grid, start, end)
                 )
                 solve_thread.start()
 
