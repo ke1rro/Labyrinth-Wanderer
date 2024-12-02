@@ -22,7 +22,11 @@
 │   ├── colors.py # Constants
 │   ├── gui.py # User Interface module
 │   ├── maze.py # GridCell class
-│   └── solver.py # Algorithm for solving maze
+│   ├── bfs.py # Breadth-First-Search algorithm
+│   ├── dfs.py # Depth-First-Search algorithm
+│   ├── astar.py # A* algorithm
+│   ├── djikstra.py # Djikstra algorithm
+│   └── solver.py # Main utility for solving algorithms
 ├── static
 │   └── button.json # Themes for GUI
 └── test.csv # Test file for maze solving
@@ -40,10 +44,10 @@ pygame_gui==0.6.12
 pip install -r requirements.txt
 ```
 
-## IF YOU WANT TO IMPLEMENT ANY ALGORITHM FOLLOW THIS STEPS
+## IF YOU WANT TO IMPLEMENT ANY ALGORITHM FOLLOW THESE STEPS
 
-    1. Create branch with algorithm name
-    2. Code the algorithm up to data structure base on MAZE class
+    1. Create a branch with the algorithm name
+    2. Code the algorithm up to the data structure based on the MAZE class
     3.
         1. Commit
         2. Push
