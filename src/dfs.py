@@ -54,7 +54,8 @@ def res_dfs(
     return visualize_path(grid, outp, draw)
 
 
-def dfs_labirynt(matrix: list, grid: np.array, draw: callable) -> str:
+def dfs_labirynt(matrix: list, grid: np.array, draw: callable,
+                 end_callback: callable = None) -> str:
     """
     Function that works in Deepth first search
     way to find a way out of the labirynth
@@ -81,6 +82,7 @@ def dfs_labirynt(matrix: list, grid: np.array, draw: callable) -> str:
             draw()
 
         if (x, y) == end:
+            end_callback()
             return res_dfs(path_str, grid, draw, start)
 
         for direction, move in directions.items():

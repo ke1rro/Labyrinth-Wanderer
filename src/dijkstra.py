@@ -1,6 +1,7 @@
 """dijkstra algorithm"""
 
 from queue import PriorityQueue
+
 import numpy as np
 
 
@@ -162,7 +163,8 @@ def visualize_path(grid: np.array,
 
 
 def find_shortest_path(
-    maze_matr: list[list[int]], draw: callable, grid: np.array
+    maze_matr: list[list[int]], draw: callable, grid: np.array,
+        end_callback: callable = None
 ) -> list[tuple] | int:
     """
     Finds the shortest path in a maze represented as a 2D NumPy array.
@@ -183,6 +185,7 @@ def find_shortest_path(
     maze_dict, start, end = matrix_to_adj_dict(maze_matr)
     graph = dijkstra(maze_dict, start, end, grid, draw)
     if graph != -1:
+        end_callback()
         path = reconstruct_path(graph, start, end)
         return visualize_path(grid, path, draw)
 
