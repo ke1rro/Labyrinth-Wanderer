@@ -1,49 +1,76 @@
-# Maze solving algorithms
+Функція “DFS ALGORITHM”
 
-- Breadth First Search
-- Depth First Search
-- A* Search
-- Trémaux's algorithm
-- Dead-end filling
-- Recursive algorithm
-- Maze-routing algorithm
-- Shortest path algorithm
-- Multi-agent maze-solving
-- Dijkstra’s Algorithm
-- Wall Follower (or Left/Right-Hand Rule)
-- Greedy Best-First Search
-- Bidirectional Search
-- Random Mouse Algorithm
-- Flood Fill Algorithm
-- Pledge Algorithm
+Для нашого лабіринту ми вирішили використати декілька різних алгоритмів. Одним із них став пошук в глибину.
+Принцип пошуку у глибину - це алгоритм для обходу (у нашому випадку) графа до моменту знаходження виходу. На відміну від пошуку в ширину використовується stack замість queue. 
+Складається з двох частин: 
+Основна частина, яка повертає шлях літерами
+def dfs_labirynt(matrix):
+   '''
+   Function that works in Deepth first search way to find a way out of the labirynth
+   >>> matrix = [
+   [1, 1, 1, 1],
+   [0, 0, 2, 1],
+   [1, 0, 1, 1],
+   [1, 3, 1, 1]
+   ]
+   DDR
+   '''
 
----
+2. Допоміжна щоб перевести літери з список кортежів. 
+def res_dfs(matrix):
+   '''
+   Function that transfers the dfs_algorithm result into list of tuples
+   >>> res_dfs([[1, 1, 1, 1],[0, 0, 2, 1],[1, 0, 1, 1],[1, 3, 1, 1]])
+   [(1, 2), (1, 3), (2, 3), (3, 3), (3, 2), (3, 1)]
+   '''
 
-## Requirements
 
-```txt
-numpy==2.1.3
-pygame==2.6.1
-```
+Як працює перша dfs_algorithm:
+задаються початкові координати : 
+start = None
+   end = None
+for i in range(len(matrix)):
+       for j in range(len(matrix[i])):
+           if matrix[i][j] == 2:
+               start = (i, j)
+           elif matrix[i][j] == 3:
+               end = (i, j)  
 
-```bash
-pip install -r requirements.txt
-```
+2) Підготовка до пошуку: використовуємо stack, адже для цього алгоритму нам потрібен саме він за принципом “Last in - First out”. Також додаємо словник з літерами координат
+stack = [("", start)]
 
-## Useful links
 
-- https://en.wikipedia.org/wiki/Maze-solving_algorithm
-- https://bryukh.com/labyrinth-algorithms/
-- https://matteo-tosato7.medium.com/exploring-the-depths-solving-mazes-with-a-search-algorithm-c15253104899
-- More about maze generating
-    - https://www.youtube.com/watch?v=jZQ31-4_8KM&t=96s
+   directions = {
+       "U": (-1, 0),
+       "D": (1, 0),
+       "L": (0, -1),
+       "R": (0, 1)
+   }
 
-## IF YOU WANT TO IMPLEMENT ANY ALGORITHM FOLLOW THIS STEPS
+3) Основний цикл пошуку шляху: 
+Беремо поточну клітинку і шлях зі стеку, перевіряємо чи не є кінцем. Якщо так, то повертаємо шлях, як ні то продовжуємо цикл: 
+while len(stack) > 0:
+       path, (x, y) = stack.pop()
+       if (x, y) == end:
+           return path
 
-    1. Create branch with algorithm name
-    2. Code the algorithm up to data structure base on MAZE class
-    3.
-        1. Commit
-        2. Push
-        3, Pull request
-    4. Done
+4) Розглядаємо всі координати та створюємо нові координати х та у. Перевіряємо, чи координати не виходять за межі матриці і чи не є стінкою. Тоді додаємо літеру напрямку та нові координати. Позначаємо відвідану клітинку 1. 
+for d, move in directions.items():
+           new_x = x + move[0]
+           new_y = y + move[1]
+           if 0 <= new_x < len(matrix) and 0 <= new_y < len(matrix[0]):
+               if matrix[new_x][new_y] != 1:
+                   stack.append((path + d, (new_x, new_y)))
+                   matrix[new_x][new_y] = 1
+
+
+Якщо шлях не було знайдено, повертаємо ‘-1’.
+
+Таким чином, отримавши таку матрицю на розгляд: 
+[1, 1, 1, 1]
+[0, 0, 2, 1]
+[1, 0, 1, 1]
+[1, 3, 1, 1]
+
+Ми отримали такий шлях: RDDLL
+[(1, 2), (1, 3), (2, 3), (3, 3), (3, 2), (3, 1)]
