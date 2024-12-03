@@ -441,12 +441,20 @@ if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
 Пошук в ширину (також БФС, BFS) гарантовано знаходить найкоротший шлях від початку до кінця графу. Цей алгоритм використовує принцип збереження "перший прийшов - перший вийшов", де всі сусіди теперішнього графу зберігаються в чергу.
 БФС в цій програмі працює напряму з об'єктами матриці, що відразу й виводяться - GridCell. Для початку в матриці елементів за допомогою *find_start()* шукається елемент, позначений в пам'яті як старт:
 
-![image](https://github.com/user-attachments/assets/ae79bb5f-f53b-457f-82b8-35c8e6cd83bb)
+```python
+def find_start(coord_matrix: np.array) -> list:
+    for row in coord_matrix:
+        for cell in row:
+            if cell.is_start():
+                return [cell]
+```
 
 Черга зберігається в double ended queue (deque), туди відразу додаємо стартовий елемент. Також зберігається словник relations, що необхідний для правильного показу найкоротшого шляху.
 Тоді викликається цикл, що діє поки в черзі наявні елементи.
 
-![image](https://github.com/user-attachments/assets/775d4775-5c35-41c1-8240-6d5c585d1a33)
+```python
+curr_node = queue.popleft()
+```
 
 З черги береться елемент ліворуч, тобто той, що "потрапив" до черги першим. Якщо елемент не є стартом, то він позначається як "visited", тобто його вже немає потреби перевіряти. Тоді, за допомогою функції cached_neighbors, знаходяться всі сусіди клітинки на матриці. Тоді лишаємо сусідів, що:
 -Не є стіною,
@@ -454,14 +462,33 @@ if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
 -Не є оглянутими (не visited),
 і додаємо їх до черги. Також зберігаємо їх до словника "відносин", де під ключем кожного з цих сусідів зберігаємо теперішній елемент.
 
-![image](https://github.com/user-attachments/assets/51cb5d9c-f423-4a9f-a6da-0ae850003fec)
+```python
+if neighbor.is_unvisited() and not neighbor.is_start:
+    queue.append(neighbor)
+    relations[neighbor] = curr_node
+    neighbor.make_open()
+```
 
 Якщо ж один з сусідів є кінцем, цей алгоритм ставить цього сусіда попереду черги, оскільки всі інші шляхи можна проігнорувати.
 
-![image](https://github.com/user-attachments/assets/e9c865b2-11bf-45eb-9a4b-c78097c789d4)
+```python
+if neighbor.is_end():
+    queue.appendleft(neighbor)
+    relations[neighbor] = curr_node
+```
 
 Як тільки цикл доходить до кінцевого елемента, викликається функція backtrace(), яка виводить на екран правильний шлях:
 
-![image](https://github.com/user-attachments/assets/53c3b06f-3072-44a3-add7-a23aea4bc0a0)
+```python
+def backtrace(draw: callable, relations: dict, end_node: GridCell):
+    curr_node = end_node
+    while True:
+        curr_node.make_path()
+        parent = relations[curr_node]
+        draw()
+        curr_node = parent
+        if curr_node.is_start():
+            break
+```
 
 Оскільки ключем кожного з елементів є його "батьківський" елемент, ця функція, аби знайти правильний шлях, просто циклічно бере "батьківський" елемент кожного наступного "батьківського" елементу доти, доки не знайде початок.
