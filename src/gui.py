@@ -14,13 +14,14 @@ import pygame_gui
 import pygame_gui.windows.ui_file_dialog
 from pygame_gui.core import ObjectID
 
-import colors
-from A_star_visual import a_star_manhattan
+from a_star_visual import a_star_manhattan
 from bfs import bfs_algorithm
 from dfs import dfs_labirynt
 from dijkstra import find_shortest_path
+from greedy_a_star import greedy_a_star
 from maze import GridCell
-from solver import algorithm
+
+from . import colors
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../")
 sys.setrecursionlimit(15000)
@@ -134,13 +135,20 @@ class MazeApp:
 
     def __init__(self, height=1000, width=1600):
         pygame.init()
-        self.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((width, height),
+                                              pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Labyrinth Wanderer")
         self.width, self.height = width, height
         self.running = True
-        theme_path = "static/theme.json"
-        self.manager = pygame_gui.UIManager((width, height), theme_path=theme_path)
+
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(base_dir)
+        theme_path = os.path.join(project_root, "static", "theme.json")
+        logo_path = os.path.join(project_root, "img", "LabWanderer.png")
+
+        self.manager = pygame_gui.UIManager((width, height),
+                                            theme_path=theme_path)
 
         self.upload_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(25, self.height // 2 - 125, 150, 50),
@@ -178,7 +186,7 @@ class MazeApp:
         )
 
         self.drop_menu_alg = pygame_gui.elements.UIDropDownMenu(
-            options_list=["BFS", "DFS", "A-star", "Dijkstra's", "A-start-gui"],
+            options_list=["BFS", "DFS", "A-star", "Dijkstra's", "A-star-gui"],
             starting_option="A-star",
             relative_rect=pygame.Rect(25, self.height // 2 - 300, 150, 50),
             manager=self.manager,
@@ -212,7 +220,7 @@ class MazeApp:
 
         self.logo = pygame_gui.elements.UIImage(
             relative_rect=pygame.Rect(1250, 400, 250, 250),
-            image_surface=pygame.image.load("img/LabWanderer.png"),
+            image_surface=pygame.image.load(logo_path),
             manager=self.manager,
         )
 
@@ -329,8 +337,8 @@ class MazeApp:
                     grid,
                     end_callback,
                 )
-            elif selected_algorithm == "A-start-gui":
-                algorithm(
+            elif selected_algorithm == "A-star-gui":
+                greedy_a_star(
                     lambda: self.maze_window.draw(grid), grid, start, end, end_callback
                 )
 
@@ -366,7 +374,7 @@ class MazeApp:
                     # Carve the path
                     maze[y + dy][x + dx] = 0  # Open the intermediate cell
                     maze[ny][nx] = 0  # Open the target cell
-                    carve_maze(nx, ny)  # Recurse
+                    carve_maze(nx, ny)
 
         # Start carving from the top-left corner
         maze[1][1] = 0
@@ -599,8 +607,3 @@ class MazeApp:
             pygame.display.flip()
 
         pygame.quit()
-
-
-if __name__ == "__main__":
-    app = MazeApp()
-    app.run()

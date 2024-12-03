@@ -1,7 +1,7 @@
 """DFS"""
 
 
-def dfs_labirynt(matrix):
+def dfs_labirynt(matrix: list[list[int]]) -> str:
     '''
     Function that works in Deepth first
     search way to find a way out of the labirynth
@@ -47,7 +47,7 @@ def dfs_labirynt(matrix):
     return "-1"
 
 
-def res_dfs(matrix):
+def res_dfs(matrix: list[list[int]]) -> list[tuple[int]]:
     """Transfers coordinates as letters into list of tuples
 
     Args:

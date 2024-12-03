@@ -25,7 +25,8 @@ def find_start(coord_matrix: np.array) -> list:
 
 
 @lru_cache(None)
-def cached_neighbors(row: int, col: int, total_rows: int, total_cols: int):
+def cached_neighbors(row: int, col: int, total_rows: int,
+                     total_cols: int) -> list[tuple[int]]:
     """
     Cache neighbors for a cell to avoid recalculating repeatedly.
     Neighbors are calculated using only the cell's

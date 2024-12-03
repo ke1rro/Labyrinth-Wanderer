@@ -96,7 +96,8 @@ class GridCell:
 
     def draw_cell(self, window: pygame.Surface) -> None:
         """Draw the cell to form the grid of the maze."""
-        pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.width))
+        pygame.draw.rect(window, self.color,
+                         (self.x, self.y, self.width, self.width))
 
     def update_neighbors(self, grid: np.array) -> None:
         """Check for the up, down, left, right neighbors"""
@@ -108,7 +109,8 @@ class GridCell:
         ):  # DOWN
             self.neighbors.append(grid[self.row + 1][self.col])
 
-        if self.row > 0 and not grid[self.row - 1][self.col].is_barrier():  # UP
+        if (self.row > 0
+                and not grid[self.row - 1][self.col].is_barrier()):  # UP
             self.neighbors.append(grid[self.row - 1][self.col])
 
         if (
@@ -117,7 +119,8 @@ class GridCell:
         ):  # RIGHT
             self.neighbors.append(grid[self.row][self.col + 1])
 
-        if self.col > 0 and not grid[self.row][self.col - 1].is_barrier():  # LEFT
+        if (self.col > 0
+                and not grid[self.row][self.col - 1].is_barrier()):  # LEFT
             self.neighbors.append(grid[self.row][self.col - 1])
 
     def __lt__(self, other: object) -> bool:

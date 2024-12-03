@@ -7,7 +7,7 @@ import numpy as np
 from maze import GridCell
 
 
-def characteristic_function(p1: tuple[int], p2: tuple[int]) -> int:
+def heuristic_function(p1: tuple[int], p2: tuple[int]) -> int:
     """
     The distance of two points
     """
@@ -31,9 +31,9 @@ def reconstruct_path(came_from: dict,
         draw()
 
 
-def algorithm(draw: callable, grid: np.array,
-              start: GridCell, end: GridCell,
-              end_callback: callable = None) -> bool:
+def greedy_a_star(draw: callable, grid: np.array,
+                  start: GridCell, end: GridCell,
+                  end_callback: callable = None) -> bool:
     """A star"""
     count = 0
     open_set = PriorityQueue()
@@ -44,7 +44,7 @@ def algorithm(draw: callable, grid: np.array,
     g_score[start] = 0
 
     f_score = {cell: float("inf") for row in grid for cell in row}
-    f_score[start] = characteristic_function(start.get_pos(), end.get_pos())
+    f_score[start] = heuristic_function(start.get_pos(), end.get_pos())
 
     open_set_hash = {start}
     node_update_count = 0
@@ -67,7 +67,7 @@ def algorithm(draw: callable, grid: np.array,
             if temp_g_score < g_score[neighbor]:
                 came_from[neighbor] = current_node
                 g_score[neighbor] = temp_g_score
-                f_score[neighbor] = temp_g_score + characteristic_function(
+                f_score[neighbor] = temp_g_score + heuristic_function(
                     neighbor.get_pos(), end.get_pos()
                 )
 

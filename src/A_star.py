@@ -1,9 +1,12 @@
+"""A-star"""
+
 import heapq
 
-def a_star_manhattan(grid):
+
+def a_star_manhattan(grid: list[list]) -> list[tuple[int]]:
     """
     A* algorithm implementation with Manhattan distance heuristic.
-    
+
     Parameters:
         grid: 2D list where:
               - 0 represents walkable cells,
@@ -12,9 +15,12 @@ def a_star_manhattan(grid):
               - 3 represents the goal position.
 
     Returns:
-        List of tuples representing the path from start to goal, or None if no path exists.
-    >>> a_star_manhattan([[0, 1, 0, 0, 0], [2, 1, 0, 1, 0], [0, 0, 0, 1, 3], [1, 1, 0, 1, 0], [0, 0, 0, 0, 0]])
-    [(1, 0), (2, 0), (2, 1), (2, 2), (1, 2), (0, 2), (0, 3), (0, 4), (1, 4), (2, 4)]
+        List of tuples representing the path from start to goal,
+        or None if no path exists.
+    >>> a_star_manhattan([[0, 1, 0, 0, 0], [2, 1, 0, 1, 0], \
+[0, 0, 0, 1, 3], [1, 1, 0, 1, 0], [0, 0, 0, 0, 0]])
+    [(1, 0), (2, 0), (2, 1), (2, 2), (1, 2), (0, 2), \
+(0, 3), (0, 4), (1, 4), (2, 4)]
     """
     def manhattan_distance(a, b):
         """Calculate the Manhattan distance heuristic."""
@@ -58,19 +64,18 @@ def a_star_manhattan(grid):
         for neighbor in neighbors:
             nx, ny = neighbor
             # Check bounds and if the neighbor is walkable
-            if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] in (0, 3):
+            if (0 <= nx < len(grid) and 0 <= ny < len(grid[0])
+                    and grid[nx][ny] in (0, 3)):
                 # Calculate tentative g_score
                 tentative_g_score = g_score[current] + 1
 
-                if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
+                if (neighbor not in g_score
+                        or tentative_g_score < g_score[neighbor]):
                     # Update scores and add the neighbor to the priority queue
                     came_from[neighbor] = current
                     g_score[neighbor] = tentative_g_score
-                    f_score[neighbor] = tentative_g_score + manhattan_distance(neighbor, goal)
+                    f_score[neighbor] = (tentative_g_score +
+                                         manhattan_distance(neighbor, goal))
                     heapq.heappush(open_set, (f_score[neighbor], neighbor))
 
     return None
-
-# if __name__ == "__main__":
-#     import doctest
-#     doctest.testmod()
