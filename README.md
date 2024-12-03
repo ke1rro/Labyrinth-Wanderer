@@ -234,4 +234,204 @@ def __lt__(self, other: object) -> bool:
         return reconstruct_path(graph, start, end)
     return -1
     ```
-    
+
+---
+
+## DFS алгоритм
+
+Принцип пошуку у глибину - це алгоритм для обходу (у нашому випадку) графа до моменту знаходження виходу. На відміну від пошуку в ширину використовується stack замість queue.
+
+Складається з двох частин:
+
+1. Основна частина, яка порвертає шлях літерами
+
+``` python
+def dfs_labirynt(matrix):
+    '''
+    Function that works in Deepth first search way to find a way out of the labirynth
+    >>> matrix =
+    [1, 1, 1, 1],
+    [0, 0, 2, 1],
+    [1, 0, 1, 1]
+    [1, 3, 1, 1]
+    DDR
+    '''
+```
+
+2. Допоміжна щоб перевести літери з список кортежів.
+
+``` python
+def res_dfs(matrix):
+   '''
+   Function that transfers the dfs_algorithm result into list of tuples
+   >>> res_dfs([[1, 1, 1, 1],[0, 0, 2, 1],[1, 0, 1, 1],[1, 3, 1, 1]])
+   [(1, 2), (1, 3), (2, 3), (3, 3), (3, 2), (3, 1)]
+   '''
+```
+
+## Як працює перша dfs_algorithm
+
+1) задаються початкові координати :
+
+``` python
+start = None
+   end = None
+for i in range(len(matrix)):
+       for j in range(len(matrix[i])):
+           if matrix[i][j] == 2:
+               start = (i, j)
+           elif matrix[i][j] == 3:
+               end = (i, j)
+```
+
+2) Підготовка до пошуку: використовуємо stack, адже для цього алгоритму нам потрібен саме він за принципом “Last in - First out”. Також додаємо словник з літерами координат
+
+``` python
+stack = [("", start)]
+   directions = {
+       "U": (-1, 0),
+       "D": (1, 0),
+       "L": (0, -1),
+       "R": (0, 1)
+}
+```
+
+3) Основний цикл пошуку шляху
+
+Беремо поточну клітинку і шлях зі стеку, перевіряємо чи не є кінцем. Якщо так, то повертаємо шлях, як ні то продовжуємо цикл:
+
+``` python
+while len(stack) > 0:
+       path, (x, y) = stack.pop()
+       if (x, y) == end:
+           return path
+```
+
+4) Розглядаємо всі координати та створюємо нові координати х та у. Перевіряємо, чи координати не виходять за межі матриці і чи не є стінкою. Тоді додаємо літеру напрямку та нові координати. Позначаємо відвідану клітинку 1
+
+``` python
+for d, move in directions.items():
+           new_x = x + move[0]
+           new_y = y + move[1]
+           if 0 <= new_x < len(matrix) and 0 <= new_y < len(matrix[0]):
+               if matrix[new_x][new_y] != 1:
+                   stack.append((path + d, (new_x, new_y)))
+                   matrix[new_x][new_y] = 1
+```
+
+Якщо шлях не було знайдено, повертаємо ‘-1’.
+
+Таким чином, отримавши таку матрицю на розгляд:
+
+[1, 1, 1, 1]
+
+[0, 0, 2, 1]
+
+[1, 0, 1, 1]
+
+[1, 3, 1, 1]
+
+Ми отримали такий шлях: RDDLL
+
+[(1, 2), (1, 3), (2, 3), (3, 3), (3, 2), (3, 1)]
+
+---
+
+## A*
+
+Алгоритм A* реалізує пошук найкоротшого шляху. У даній імплементації коду використовується манхеттенський метод. Алгоритм враховує перешкоди.
+Використання бібліотеки heapq
+
+### Використання бібліотеки heapq
+
+Бібліотека використовується для роботи з чергою пріоритетів. В алгоритмі А* нам потрібно обирати вершину з найменшою вартістю кожного разу. `Heapq` дозволяє ефективно отримувати та додавати елементи у чергу, забезпечуючи високу швидкість програми. Його ефективність оцінюється як `O(logn)`.
+
+#### Допоміжна функція
+
+Алгоритм написано за допомогою метода Манхеттена, що вважається найоптимальнішим. Повертається абсолютна сума різниць координат осі х та у
+
+``` python
+def manhattan_distance(a, b):
+    """Calculate the Manhattan distance heuristic."""
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+```
+
+Програма вважає, що 0 - клітина, якою можна рухатись, 1 - перешкода, 2 - стартова точка, 3 - кінцева точка. Шукаємо початок та кінець:
+
+```python
+# Find start and goal positions
+start, goal = None, None
+length_grid = len(grid)
+for i in range(length_grid):
+    for j in range(length_grid):
+        if grid[i][j] == 2:
+            start = (i, j)
+        elif grid[i][j] == 3:
+            goal = (i, j)
+```
+
+#### Робимо чергу пріоритетів
+
+``` python
+# Priority queue for nodes to explore
+open_set = []
+heapq.heappush(open_set, (0, start)) # (priority, position)
+```
+
+Пріоритет визначається як сума вартості досягнення точки g_score та як оцінка відстані до цілі
+
+#### Визначаємо вартість шляху
+
+``` python
+# Tracking paths and costs
+came_from = {} # To reconstruct the path
+g_score = {start: 0} # Cost to reach each node
+f_score = {start: manhattan_distance(start, goal)} # Estimated total cost
+```
+
+**g_score** визначає реальну вартість шляху до кожної клітини
+**F_score** оцінює прогнозовану відстань до цілі
+
+Головний цикл буде працювати поки в черзі open_set є точки для обробки
+
+**Вибір клітини з найменшим пріоритетом**
+вона стає поточною та видаляється з черги. Якщо поточна клітина є кінцевою ціллю, то програма повертає шлях до неї
+
+```python
+while open_set:
+    # Get the node with the smallest f_score
+    _, current = heapq.heappop(open_set)
+    # If the goal is reached, reconstruct the path
+    if current == goal:
+        path = []
+        while current in came_from:
+            path.append(current)
+            current = came_from[current]
+        path.append(start)
+        return path[::-1] # Return reversed path
+```
+
+Якщо ж ні, то ми шукаємо сусідів цієї клітини та перевіряємо чи знаходяться вони у межах сітки та чи є вони прохідними або кінцевими
+
+```python
+# Explore neighbors
+x, y = current
+neighbors = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+for neighbor in neighbors:
+    nx, ny = neighbor
+    # Check bounds and if the neighbor is walkable
+    if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] in (0, 3):
+```
+
+Далі розраховуємо вартість цієї клітини. Якщо новий шлях до сусіда коротший - оновлюється came_from, g_score та f_score. Сусід додається у чергу open_set
+
+```python
+# Calculate tentative g_score
+
+tentative_g_score = g_score[current] + 1
+if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
+    # Update scores and add the neighbor to the priority queue came_from[neighbor] = current
+    g_score[neighbor] = tentative_g_score
+    f_score[neighbor] = tentative_g_score + manhattan_distance(neighbor, goal)
+    heapq.heappush(open_set, (f_score[neighbor], neighbor))
+```
