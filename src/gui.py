@@ -186,7 +186,8 @@ class MazeApp:
         )
 
         self.drop_menu_alg = pygame_gui.elements.UIDropDownMenu(
-            options_list=["BFS", "DFS", "A-star", "Dijkstra's", "A-star-gui"],
+            options_list=["BFS", "DFS", "A-star", "Dijkstra's",
+                          "A-star-greedy"],
             starting_option="A-star",
             relative_rect=pygame.Rect(25, self.height // 2 - 300, 150, 50),
             manager=self.manager,
@@ -337,7 +338,7 @@ class MazeApp:
                     grid,
                     end_callback,
                 )
-            elif selected_algorithm == "A-star-gui":
+            elif selected_algorithm == "A-star-greedy":
                 greedy_a_star(
                     lambda: self.maze_window.draw(grid), grid, start, end, end_callback
                 )
