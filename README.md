@@ -14,13 +14,16 @@
 
 ## Features
 
-- **Uploading maze from csv file** - `#` wall `.` path
+- **Uploading maze from csv file** - to upload the maze create a `.csv` file with `#` wall `.` path
 - **Generate maze** - creates **empty canvas**, where user can draw. **First, orange cell** - start, **Second, blue cell - end**, next cells represent **barriers(walls)**. **To delete the wall** use **RIGHT MOUSE BUTTON**, also works for start and end.
 - **Save Solution** - saves the image of solved labyrinth to `results/solution.jpg`
 - **Random generation** - generates the maze of the given size using **DFS**
 - **Left drop down menu** - to choose which algorithm to use
 - **Right drop down menu** - to choose the size of the labyrinth/empty canvas
 - **Right down corner** - timer of algorithm execution in seconds
+
+> [!IMPORTANT]
+> It is important that the given maze must be square.
 
 ---
 ![alt text](</img/gui.png>)
